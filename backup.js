@@ -43,33 +43,35 @@ const main = async () => {
 
   await ensureDirExists(BACKUP_DIR)
 
-  manifest.websites.forEach(async website => {
-    const subdir = path.join(BACKUP_DIR, website)
-    await ensureDirExists(subdir)
+  await Promise.all(manifest.websites.map(website => {
+    return new Promise(async (resolve, reject) => {
+      const subdir = path.join(BACKUP_DIR, website)
+      await ensureDirExists(subdir)
 
-    // the command we want to run
-    // httrack --update --footer "" $WEBSITE
-    const httrack = spawn("httrack", [
-      "--update",
-      "--footer",
-      '""',
-      "-O",
-      subdir,
-      website
-    ])
+      const httrack = spawn("httrack", [
+        "--update",
+        "--footer",
+        '""',
+        "-O",
+        subdir,
+        website
+      ])
 
-    httrack.on("close", code => {
-      console.log(`backup exited with code ${code}`)
+      httrack.on("close", code => {
+        console.log(`backup of ${website} exited with code ${code}`)
+        resolve()
+      })
+
+      httrack.stdout.on("data", data => {
+        console.log(`stdout: ${data}`)
+      })
+
+      httrack.stderr.on("data", data => {
+        console.log(`stderr: ${data}`)
+      })
     })
-
-    httrack.stdout.on("data", data => {
-      console.log(`stdout: ${data}`)
-    })
-
-    httrack.stderr.on("data", data => {
-      console.log(`stderr: ${data}`)
-    })
-  })
+  }))
+  console.log('all backups complete :)');
 }
 
 main()

@@ -13,12 +13,10 @@ const mkdir = promisify(fs.mkdir)
 
 const tildeRegex = /^~/
 
-const untildify = pathname => {
-  if (pathname.match(tildeRegex)) {
-    return pathname.replace(tildeRegex, os.homedir())
-  }
-  return pathname
-}
+const untildify = pathname =>
+  pathname.match(tildeRegex)
+    ? pathname.replace(tildeRegex, os.homedir())
+    : pathname
 
 // Parse config, set up configuration details
 const parseManifest = async () =>
@@ -43,35 +41,37 @@ const main = async () => {
 
   await ensureDirExists(BACKUP_DIR)
 
-  await Promise.all(manifest.websites.map(website => {
-    return new Promise(async (resolve, reject) => {
-      const subdir = path.join(BACKUP_DIR, website)
-      await ensureDirExists(subdir)
+  await Promise.all(
+    manifest.websites.map(website => {
+      return new Promise(async (resolve, reject) => {
+        const subdir = path.join(BACKUP_DIR, website)
+        await ensureDirExists(subdir)
 
-      const httrack = spawn("httrack", [
-        "--update",
-        "--footer",
-        '""',
-        "-O",
-        subdir,
-        website
-      ])
+        const httrack = spawn("httrack", [
+          "--update",
+          "--footer",
+          '""',
+          "-O",
+          subdir,
+          website
+        ])
 
-      httrack.on("close", code => {
-        console.log(`backup of ${website} exited with code ${code}`)
-        resolve()
-      })
+        httrack.on("close", code => {
+          console.log(`backup of ${website} exited with code ${code}`)
+          resolve()
+        })
 
-      httrack.stdout.on("data", data => {
-        console.log(`stdout: ${data}`)
-      })
+        httrack.stdout.on("data", data => {
+          console.log(`stdout: ${data}`)
+        })
 
-      httrack.stderr.on("data", data => {
-        console.log(`stderr: ${data}`)
+        httrack.stderr.on("data", data => {
+          console.log(`stderr: ${data}`)
+        })
       })
     })
-  }))
-  console.log('all backups complete :)');
+  )
+  console.log("all backups complete :)")
 }
 
 main()

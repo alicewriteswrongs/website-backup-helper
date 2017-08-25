@@ -11,7 +11,6 @@ const readFile = promisify(fs.readFile)
 const exists = promisify(fs.exists)
 const mkdir = promisify(fs.mkdir)
 
-
 const tildeRegex = /^~/
 
 const untildify = pathname => {
@@ -50,26 +49,26 @@ const main = async () => {
 
     // the command we want to run
     // httrack --update --footer "" $WEBSITE
-    const httrack = spawn('httrack', [
-      '--update',
-      '--footer',
+    const httrack = spawn("httrack", [
+      "--update",
+      "--footer",
       '""',
-      '-O',
+      "-O",
       subdir,
       website
     ])
 
-    httrack.on('close', code => {
-      console.log(`backup exited with code ${code}`);
+    httrack.on("close", code => {
+      console.log(`backup exited with code ${code}`)
     })
 
-    httrack.stdout.on('data', (data) => {
-      console.log(`stdout: ${data}`);
-    });
+    httrack.stdout.on("data", data => {
+      console.log(`stdout: ${data}`)
+    })
 
-    httrack.stderr.on('data', (data) => {
-      console.log(`stderr: ${data}`);
-    });
+    httrack.stderr.on("data", data => {
+      console.log(`stderr: ${data}`)
+    })
   })
 }
 

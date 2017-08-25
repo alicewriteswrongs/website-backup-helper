@@ -42,9 +42,9 @@ const main = async () => {
   await ensureDirExists(BACKUP_DIR)
 
   await Promise.all(
-    manifest.websites.map(website => {
+    manifest.websites.map(({ url, dirname }) => {
       return new Promise(async (resolve, reject) => {
-        const subdir = path.join(BACKUP_DIR, website)
+        const subdir = path.join(BACKUP_DIR, dirname)
         await ensureDirExists(subdir)
 
         const httrack = spawn("httrack", [
@@ -53,11 +53,11 @@ const main = async () => {
           '""',
           "-O",
           subdir,
-          website
+          url
         ])
 
         httrack.on("close", code => {
-          console.log(`backup of ${website} exited with code ${code}`)
+          console.log(`backup of ${url} exited with code ${code}`)
           resolve()
         })
 

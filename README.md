@@ -15,7 +15,7 @@ directory from which it is executed. This basically looks like this:
 
 ```json
 {
-  "websites" [
+  "websites": [
     {
       "url": "en.wikipedia.org",
       "dirname": "wikipedia"

@@ -13,9 +13,14 @@ This script is meant to be run unattended, so it doesn't have a CLI.
 Instead, it expects a `backup-manifest.json` file to be written to the
 directory from which it is executed. This basically looks like this:
 
-```js
+```json
 {
-  "websites" [ "en.wikipedia.org" ],
+  "websites" [
+    {
+      "url": "en.wikipedia.org",
+      "dirname": "wikipedia"
+    }
+  ],
   "backup_dir": "~/my_huge_backup_directory"
 }
 ```

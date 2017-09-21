@@ -3,8 +3,8 @@
 This is a little node.js script which uses `wget` to scrape a website and
 back it up to S3 (although right now I haven't implemented the backup part
 yet...). It is designed to be run as a cron job (or similar) in
-a continuous fashion, using httrack's ability to fetch only new content to
-save incremental backups.
+a continuous fashion, using wget ability to fetch only new content to save
+incremental backups.
 
 ## Usage
 

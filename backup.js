@@ -47,29 +47,24 @@ const main = async () => {
         const subdir = path.join(BACKUP_DIR, dirname)
         await ensureDirExists(subdir)
 
-        const httrack = spawn("httrack", [
-          "--update",
-          "--updatehack",
-          "--verbose",
-          "--footer",
-          '""',
-          "-O",
+        const wget = spawn("wget", [
+          "--mirror",
+          "--convert-links",
+          "--no-verbose",
+          "-w 1",
+          "-P",
           subdir,
           url
         ])
 
-        httrack.on("close", code => {
+        wget.on("close", code => {
           console.log(`backup of ${url} exited with code ${code}`)
           resolve()
         })
 
-        httrack.stdout.on("data", data => {
-          console.log(`stdout: ${data}`)
-        })
+        wget.stdout.on("data", console.log)
 
-        httrack.stderr.on("data", data => {
-          console.log(`stderr: ${data}`)
-        })
+        wget.stderr.on("data", console.log)
       })
     })
   )

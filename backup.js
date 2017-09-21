@@ -49,6 +49,8 @@ const main = async () => {
 
         const httrack = spawn("httrack", [
           "--update",
+          "--updatehack",
+          "--verbose",
           "--footer",
           '""',
           "-O",

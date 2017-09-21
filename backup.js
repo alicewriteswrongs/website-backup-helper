@@ -34,12 +34,20 @@ const ensureDirExists = async dirname => {
   }
 }
 
+const getLogfileName = () => {
+  let date = Date().toString().trim().replace(/ /g, "_").replace(/:/g, "_")
+
+  return `${date}_website_backup_logs.txt`
+}
+
 const main = async () => {
   const manifest = await parseManifest()
 
   const BACKUP_DIR = getBackupDir(manifest)
 
   await ensureDirExists(BACKUP_DIR)
+
+  let logfileName = getLogfileName()
 
   await Promise.all(
     manifest.websites.map(({ url, dirname }) => {
@@ -51,6 +59,7 @@ const main = async () => {
           "--mirror",
           "--convert-links",
           "--no-verbose",
+          `--append-output=${logfileName}`,
           "-w 1",
           "-P",
           subdir,
@@ -64,7 +73,9 @@ const main = async () => {
 
         wget.stdout.on("data", data => console.log(String(data)))
 
-        wget.stderr.on("data",  data => console.log(String(data)))
+        wget.stderr.on("data", data => console.log(String(data)))
+
+        console.log(`starting backup of ${url}`)
       })
     })
   )

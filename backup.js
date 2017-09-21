@@ -62,9 +62,9 @@ const main = async () => {
           resolve()
         })
 
-        wget.stdout.on("data", console.log)
+        wget.stdout.on("data", data => console.log(String(data)))
 
-        wget.stderr.on("data", console.log)
+        wget.stderr.on("data",  data => console.log(String(data)))
       })
     })
   )
